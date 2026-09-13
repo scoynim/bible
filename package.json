@@ -15,7 +15,7 @@
     "README-CLI.md"
   ],
   "scripts": {
-    "test:cli": "node --test cli/test/*.test.mjs",
+    "test:cli": "node --test cli/test/parser.test.mjs cli/test/integration.test.mjs",
     "cli": "node cli/v.mjs"
   },
   "engines": {
