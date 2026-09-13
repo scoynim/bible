@@ -1,0 +1,34 @@
+name: Bible CLI
+
+on:
+  push:
+    paths:
+      - 'cli/**'
+      - 'bible/**'
+      - 'package.json'
+      - 'install.sh'
+      - 'install.ps1'
+      - '.github/workflows/cli-test.yml'
+  pull_request:
+    paths:
+      - 'cli/**'
+      - 'bible/**'
+      - 'package.json'
+      - 'install.sh'
+      - 'install.ps1'
+      - '.github/workflows/cli-test.yml'
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm run test:cli
+      - run: node cli/v.mjs -n "mat10 cn"
+      - run: node cli/v.mjs -b

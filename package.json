@@ -1,0 +1,24 @@
+{
+  "name": "@scoynim/bible",
+  "version": "0.1.0",
+  "description": "Offline Chinese and Korean Bible CLI",
+  "type": "module",
+  "bin": {
+    "v": "cli/v.mjs"
+  },
+  "files": [
+    "cli/v.mjs",
+    "cli/lib/*.mjs",
+    "bible/**/*.json",
+    "install.sh",
+    "install.ps1",
+    "README-CLI.md"
+  ],
+  "scripts": {
+    "test:cli": "node --test cli/test/*.test.mjs",
+    "cli": "node cli/v.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
