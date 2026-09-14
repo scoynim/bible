@@ -2,6 +2,7 @@
 set -eu
 
 PACKAGE_NAME="${SCOYNIM_BIBLE_PACKAGE:-@scoynim/bible}"
+INSTALL_PREFIX="${SCOYNIM_BIBLE_PREFIX:-$HOME/.local}"
 
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
   printf '%s\n' 'scoynim/bible 需要 Node.js 20 以上版本。'
@@ -16,7 +17,29 @@ if [ "$NODE_MAJOR" -lt 20 ]; then
 fi
 
 printf '%s\n' "正在安裝 $PACKAGE_NAME ..."
-npm install --global "$PACKAGE_NAME"
+npm install --global --prefix "$INSTALL_PREFIX" "$PACKAGE_NAME"
+
+BIN_DIR="$INSTALL_PREFIX/bin"
+case ":$PATH:" in
+  *":$BIN_DIR:"*) ;;
+  *)
+    SHELL_NAME="$(basename "${SHELL:-sh}")"
+    case "$SHELL_NAME" in
+      zsh) PROFILE_FILE="$HOME/.zprofile" ;;
+      bash) PROFILE_FILE="$HOME/.bash_profile" ;;
+      *) PROFILE_FILE="$HOME/.profile" ;;
+    esac
+
+    PATH_LINE="export PATH=\"$BIN_DIR:\$PATH\""
+    if [ ! -f "$PROFILE_FILE" ] || ! grep -Fqx "$PATH_LINE" "$PROFILE_FILE"; then
+      printf '\n%s\n' "$PATH_LINE" >> "$PROFILE_FILE"
+    fi
+    PATH="$BIN_DIR:$PATH"
+    export PATH
+    printf '%s\n' "已將 ${BIN_DIR} 加入 ${PROFILE_FILE}。"
+    ;;
+esac
+
 printf '%s\n' '安裝完成。'
-v --version
+"$BIN_DIR/v" --version
 printf '%s\n' '輸入 v -h 查看所有指令。'
