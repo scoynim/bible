@@ -4,9 +4,18 @@ function languageName(language) {
   return language === 'ko' ? '韓文' : '中文';
 }
 
-function referenceLabel(book, chapter, verse, language) {
+function referencePrefix(book, chapter, language) {
   const abbreviation = language === 'ko' ? book.koAbbr : book.zhAbbr;
-  return `${abbreviation} ${chapter}:${verse}`;
+  return language === 'ko' ? `${abbreviation} ${chapter}` : `${abbreviation}${chapter}`;
+}
+
+function referenceLabel(reference, rows, language) {
+  const verses = rows.map((row) => row.verse);
+  const continuous = verses.every((verse, index) => index === 0 || verse === verses[index - 1] + 1);
+  const verseLabel = verses.length > 1 && continuous
+    ? `${verses[0]}-${verses[verses.length - 1]}`
+    : verses.join(',');
+  return `${referencePrefix(reference.book, reference.chapter, language)}:${verseLabel}`;
 }
 
 function selectVerses(reference) {
@@ -19,22 +28,18 @@ function selectVerses(reference) {
   return selected;
 }
 
-function formatCopyVerse(reference, row, languages) {
-  return languages.map((language) => {
-    const key = language === 'ko' ? 'ko' : 'zh';
-    return `${referenceLabel(reference.book, reference.chapter, row.verse, language)} ${row[key] || ''}`;
-  }).join('\n');
-}
-
-function formatCopyBlock(reference, languages) {
+function formatCopyBlock(reference, language) {
   const rows = selectVerses(reference);
-  return rows.map((row) => formatCopyVerse(reference, row, languages)).join(languages.length > 1 ? '\n\n' : '\n');
+  const key = language === 'ko' ? 'ko' : 'zh';
+  const label = referenceLabel(reference, rows, language);
+  if (rows.length === 1) return `${label} ${rows[0][key] || ''}`;
+  return [label, ...rows.map((row) => `${row.verse}. ${row[key] || ''}`)].join('\n');
 }
 
 export function formatReferencesForCopy(references, languages) {
   return references
-    .map((reference) => formatCopyBlock(reference, languages))
-    .join(languages.length > 1 ? '\n\n' : '\n');
+    .flatMap((reference) => languages.map((language) => formatCopyBlock(reference, language)))
+    .join('\n\n');
 }
 
 export function formatChapter(reference, languages) {

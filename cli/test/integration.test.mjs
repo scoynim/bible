@@ -8,7 +8,7 @@ test('loads and formats Matthew 1:1 from the existing Bible data', async () => {
   const parsed = parseReferenceQuery('太1:1');
   const loaded = await loadReferences(parsed.references);
   const result = formatReferencesForCopy(loaded, parsed.languages);
-  assert.match(result, /^太 1:1 /);
+  assert.match(result, /^太1:1 /);
   assert.match(result, /亞伯拉罕/);
 });
 
@@ -27,9 +27,21 @@ test('matches the website copy layout for multiple bilingual verses', async () =
   const loaded = await loadReferences(parsed.references);
   const result = formatReferencesForCopy(loaded, parsed.languages);
   const lines = result.split('\n');
-  assert.match(lines[0], /^마 1:1 /);
-  assert.match(lines[1], /^太 1:1 /);
-  assert.equal(lines[2], '');
-  assert.match(lines[3], /^마 1:2 /);
-  assert.match(lines[4], /^太 1:2 /);
+  assert.equal(lines[0], '마 1:1-2');
+  assert.match(lines[1], /^1\. /);
+  assert.match(lines[2], /^2\. /);
+  assert.equal(lines[3], '');
+  assert.equal(lines[4], '太1:1-2');
+  assert.match(lines[5], /^1\. /);
+  assert.match(lines[6], /^2\. /);
+});
+
+test('matches the website copy layout for a Chinese verse range', async () => {
+  const parsed = parseReferenceQuery('太1:5-7');
+  const loaded = await loadReferences(parsed.references);
+  const lines = formatReferencesForCopy(loaded, parsed.languages).split('\n');
+  assert.equal(lines[0], '太1:5-7');
+  assert.match(lines[1], /^5\. /);
+  assert.match(lines[2], /^6\. /);
+  assert.match(lines[3], /^7\. /);
 });

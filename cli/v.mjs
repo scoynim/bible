@@ -5,7 +5,7 @@ import { formatBookTable, formatChapter, formatLanguageSummary, formatReferences
 import { parseReferenceQuery } from './lib/parser.mjs';
 import { loadReferences } from './lib/repository.mjs';
 
-const HELP = `scoynim/bible 0.1.0
+const HELP = `scoynim/bible 0.1.1
 
 用法
   v "太1:1"                       複製中文經文
@@ -48,7 +48,7 @@ async function run() {
     return;
   }
   if (command === '--version' || command === '-v') {
-    process.stdout.write('scoynim/bible 0.1.0\n');
+    process.stdout.write('scoynim/bible 0.1.1\n');
     return;
   }
   if (command === '-b' || command === '--books' || command === 'books') {
